@@ -1,7 +1,15 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
+const cors = require('cors')
 
+
+
+morgan.token('body', (req)=> JSON.stringify(req.body))
+
+app.use(cors())
 app.use(express.json())
+app.use(morgan(':method :url :status  :response-time ms :body'))
 
 let phoneBook = [
     {
@@ -59,6 +67,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
+    console.log(body);
 
     if (!body.name || !body.number) {
         return response.status(400).json({
@@ -86,7 +95,7 @@ app.post('/api/persons', (request, response) => {
 
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
