@@ -35,8 +35,8 @@ let phoneBook = [
 ]
 
 
-app.get('/', (request, response) => {
-    response.send('<h1>Phone Book</h1>')
+app.get('build/index.html', (request, response) => {
+    /* response.send('<h1>Phone Book</h1>') */
 })
 
 app.get('/api/persons', (request, response) => {
