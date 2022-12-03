@@ -4,23 +4,17 @@ const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
-const Info = require('./models/person')
 
 
 
-morgan.token('body', (req)=> JSON.stringify(req.body))
-
+morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status  :response-time ms :body'))
-
-
-
 app.get('/', (request, response) => {
     response.send('./build/index.html')
 })
-
 app.get('/api/persons', (request, response) => {
     Person.find({})
         .then(persons => {
@@ -29,14 +23,10 @@ app.get('/api/persons', (request, response) => {
 })
 
 
-app.get('/info', async(request, response) => {
+app.get('/info', async (request, response) => {
 
     const person = await Person.find({})
-    response.send(
-        `Phonebook has info for ${
-			Object.keys(person).length
-		} people <br> ${new Date()}`
-    )
+    response.send(`Phonebook has info for ${Object.keys(person).length} people <br> ${new Date()}`)
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -48,9 +38,8 @@ app.get('/api/persons/:id', (request, response, next) => {
             } else {
                 response.status(404).end()
             }
-            
         })
-        .catch(error => {    
+        .catch(error => {
             next(error)
         })
 })
@@ -58,8 +47,8 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
     Person
         .findByIdAndRemove(request.params.id)
-        .then(result => {
-            response.status(204).end()  
+        .then(() => {
+            response.status(204).end()
         })
         .catch(error => next(error))
 })
@@ -75,7 +64,7 @@ app.post('/api/persons', (request, response, next) => {
     })
 
 
-    people 
+    people
         .save()
         .then(savedPerson => {
             response.json(savedPerson)
@@ -92,7 +81,12 @@ app.put('/api/persons/:id', (request, response, next) => {
         number: body.number
     }
 
-    Person.findOneAndUpdate({_id: request.params.id}, person, { new: true, runValidators: true})
+    Person.findOneAndUpdate({
+        _id: request.params.id
+    }, person, {
+        new: true,
+        runValidators: true
+    })
         .then(updatedPerson => {
             response.json(updatedPerson)
         })
@@ -101,7 +95,9 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 
 const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' })
+    response.status(404).send({
+        error: 'unknown endpoint'
+    })
 }
 
 app.use(unknownEndpoint)
@@ -110,9 +106,13 @@ app.use(unknownEndpoint)
 const handleError = (error, request, response, next) => {
     console.log(error.message)
     if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' })
+        return response.status(400).send({
+            error: 'malformatted id'
+        })
     } else if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message})
+        return response.status(400).json({
+            error: error.message
+        })
     }
     next(error)
 }
