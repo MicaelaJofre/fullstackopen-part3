@@ -23,10 +23,13 @@ app.get('/api/persons', (request, response) => {
 })
 
 
-app.get('/info', async (request, response) => {
+app.get('/info', (request, response) => {
 
-    const person = await Person.find({})
-    response.send(`Phonebook has info for ${Object.keys(person).length} people <br> ${new Date()}`)
+    Person.find({})
+        .then(persons => {
+            response.send(`Phonebook has info for ${Object.keys(persons).length} people <br> ${new Date()}`)
+        })
+
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
